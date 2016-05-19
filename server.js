@@ -595,9 +595,11 @@ app.get("/getSensorData", function(req,res){
 
 app.get("/getLastSensorData", function(req,res){
 
-    console.log(req.param("id"));
+    console.log('in sever.js doing mongo find');
 
     mongoJS.sensorDataCollection.find({ $query: {"sensorId": "5"}, $orderby: { postDate : -1 } }).limit(1).toArray(function(err,user){
+    	console.log(user);
+    	console.log(err);
         if(user)
         {
             res.send({"data" : user});

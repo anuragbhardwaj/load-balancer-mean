@@ -22,10 +22,10 @@
 
 </head>
 
-<body ng-controller="getSensorsFunction">
+<body data-ng-controller="getSensorsFunction">
 
 <div id="wrapper" class="nav-wrapper">
-    <nav class="navbar-default navbar-static-side" role="navigation"  ng-controller="userTypeControl">
+    <nav class="navbar-default navbar-static-side" role="navigation"  data-ng-controller="userTypeControl">
         <div class="sidebar-collapse">
             <ul class="nav" id="side-menu">
                 <li class="nav-header">
@@ -72,7 +72,7 @@
 
 </div>
 
-<div id="page-wrapper" class="gray-bg">
+<div id="page-wrapper" class="black-bg">
 <div class="row border-bottom">
     <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
         <div class="navbar-header">
@@ -221,8 +221,9 @@
     <td class="center"><span class="glyphicon glyphicon-ok" ng-if="isSensorOn(s)"></span><span class="glyphicon glyphicon-alert" ng-if="isSensorOff(s)"></span></td>
     <!--<td class="center"><button class="btn btn-xm btn-success" data-id="test" ng-click="subscribeSensor(s.id, s.allocation_id)">Subscribe</button></td>-->
     <td class="center">
-        <button class="btn btn-xm btn-success get-sensor-table" ng-if="isSensorOn(s)" id="{{ s.allocation_id }}" onclick="getSensorTable(this.id)" >Show</button>
+        <button class="btn btn-xm btn-success get-sensor-table" ng-if="isSensorOn(s)" id="{{ s.allocation_id }}" onclick="getSensorTable(id)" >Show</button>
         <button class="btn btn-xm btn-success get-sensor-table" ng-if="isSensorOff(s)" style="visibility: hidden;" >Show</button>
+
 
     </td>
 
@@ -232,7 +233,7 @@
 </table>
 
 </div>
-</div>
+</div>"mean/lib/assets/add_sensor.html"
 </div>
 </div>
 </div>
@@ -242,7 +243,7 @@
 <div class="footer">
 
     <div>
-        <strong>Copyright</strong> Team #13 &copy; 2015
+        <strong>Copyright</strong> Team #18 &copy; 2016
     </div>
 </div>
 
@@ -312,7 +313,24 @@
 
     });
 
+//get load page ends here
+function getSensorTable(id) {
+        console.log("clicked get sensor table button");
+        console.log(id);
+		
+        myTemperatureChart.destroy();
+        myHumidityChart.destroy();
+        myCOChart.destroy();
+        myCO2Chart.destroy();
 
+        allocation_id = id;
+
+        myTemperatureChart = new Chart(ctx_temp).Line(startingData, {animationSteps: 15});
+        myHumidityChart = new Chart(ctx_humidity).Line(startingHumidityData, {animationSteps: 15});
+        myCOChart = new Chart(ctx_co).Line(startingCOData, {animationSteps: 15});
+        myCO2Chart = new Chart(ctx_co2).Line(startingCO2Data, {animationSteps: 15});
+
+    }
 
     var allocation_id = 1;
 
@@ -358,7 +376,7 @@
                         strokeColor: "rgba(151,187,205,1)",
                         pointColor: "rgba(151,187,205,1)",
                         pointStrokeColor: "#fff",
-                        data:  [0,0,0,0,0,0,0]
+                        data:  [1,2,3,4,5,6,6]
                     }
                 ]
             },
@@ -391,59 +409,61 @@
     setInterval(function(){
         // Add two random numbers for each dataset
         console.log(allocation_id);
-        $.ajax({
+        /* $.ajax({
             url: '/getLastSensorData',
             type: 'GET',
             data: {id: allocation_id},
-            success: function(data) {
-                //called when successful
+            // removed data argument
+            success: function() {
+            	//start // ravi// */
+    	        	var temperatures = [ 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64,
+        									66, 68, 70, 72, 74, 76, 78, 80 ];
 
-                console.log(data.data);
-                myTemperatureChart.addData([data.data[0].temperature], '');
-                myHumidityChart.addData([data.data[0].humidity], '');
-                myCOChart.addData([data.data[0].co], '');
-                myCO2Chart.addData([data.data[0].co2], '');
-
+            	var sentData = {randomTemperature: "70",
+    				            	randomCO: "187",
+    								randomHumidity: "56",
+    				  				randomCO2: "510"
+    				  			   };
+    				           
+				    	    sentData.randomTemperature = temperatures[Math.floor(Math.random() * temperatures.length)];
+				   // var randomTemperature = parseInt((Math.random() * ( 100 - 0 )));
+			         sentData.randomCO          = parseInt((Math.random() * ( 200 - 1 )));
+			         sentData.randomHumidity    =  parseInt((Math.random() * ( 86 - 35 )));
+			         sentData.randomCO2         = parseInt((Math.random() * ( 700 - 250 )));
+				//ends//ravi//
+            	//console.log(data.data);
+				
+                console.log(sentData);
+                console.log("sentData.randomTemperature"+sentData.randomTemperature);
+                console.log("this is running")
+                  myTemperatureChart.addData([sentData.randomTemperature], '');   
+                  myHumidityChart.addData([sentData.randomCO], '');         
+                  myCOChart.addData([sentData.randomHumidity], '');
+                  myCO2Chart.addData([sentData.randomCO2], '');
+            //ravi    myTemperatureChart.addData([data.data[0].temperature], '');   
+            //ravi    myHumidityChart.addData([data.data[0].humidity], '');         
+            //ravi    myCOChart.addData([data.data[0].co], '');
+            //ravi    myCO2Chart.addData([data.data[0].co2], '');
                 // Remove the first point so we dont just add values forever
                 myTemperatureChart.removeData();
                 myHumidityChart.removeData();
                 myCOChart.removeData();
-                myCO2Chart.removeData();
-
-            },
-            error: function(e) {
-                //called when there is an error
+                myCO2Chart.removeData(); 
+               //called when there is an error
                 //console.log(e.message);
-            }
-        });
+           // }
+       // });
 
 
 
-    }, 5000);
+    }, 2000);
 
 
     $(".get-sensor-table").click(function(){
         console.log("clicked destroy");
     });
 
-    function getSensorTable(id) {
-        console.log("clicked get sensor table button");
-        console.log(id);
-
-        myTemperatureChart.destroy();
-        myHumidityChart.destroy();
-        myCOChart.destroy();
-        myCO2Chart.destroy();
-
-        allocation_id = id;
-
-        myTemperatureChart = new Chart(ctx_temp).Line(startingData, {animationSteps: 15});
-        myHumidityChart = new Chart(ctx_humidity).Line(startingHumidityData, {animationSteps: 15});
-        myCOChart = new Chart(ctx_co).Line(startingCOData, {animationSteps: 15});
-        myCO2Chart = new Chart(ctx_co2).Line(startingCO2Data, {animationSteps: 15});
-
-    }
-</script>
+    </script>
 <style>
     body.DTTT_Print {
         background: #fff;
